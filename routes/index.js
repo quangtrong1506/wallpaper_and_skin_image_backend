@@ -1,9 +1,9 @@
-import authAdminRouter from './admin/auth.js';
-import usersAdminRouter from './admin/users.js';
-import profileAdminRouter from './admin/profile.js';
+import Albums from './slice/albums.js';
+import Category from './slice/category.js';
+import Works from './slice/works.js';
 const router = (app) => {
-  authAdminRouter(app);
-  usersAdminRouter(app);
-  profileAdminRouter(app);
+    Albums(app);
+    Category(app);
+    Works(app);
 };
 export default router;
