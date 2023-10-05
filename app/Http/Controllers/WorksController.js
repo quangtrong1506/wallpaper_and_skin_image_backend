@@ -12,8 +12,7 @@ class UserController extends BaseController {
     }
     async index(req, res) {
         try {
-            const { limit, page, type, sort, category } = req.query;
-            console.log(category);
+            const { limit, page, type, sort, category, q } = req.query;
             const sortOption = {};
             if (sort == 1) {
                 sortOption.created_at = -1;
@@ -32,10 +31,22 @@ class UserController extends BaseController {
                     },
                 };
             }
-            const data = await WorksRepository.paginate(
-                { type, ...categoryOption },
-                { limit: parseInt(limit) || 20, page: parseInt(page) || 1, sort: sortOption }
-            );
+            const searchOption = {};
+            if (q) {
+                searchOption.title = new RegExp(q, 'gi');
+            }
+
+            let data = {};
+            if (type != -1)
+                data = await WorksRepository.paginate(
+                    { type, ...categoryOption, ...searchOption },
+                    { limit: parseInt(limit) || 20, page: parseInt(page) || 1, sort: sortOption }
+                );
+            else if (type == -1)
+                data = await WorksRepository.paginate(
+                    { ...categoryOption, ...searchOption },
+                    { limit: parseInt(limit) || 20, page: parseInt(page) || 1, sort: sortOption }
+                );
             return responseSuccess(res, data);
         } catch (error) {
             return responseErrors(res, 400, error.message);
