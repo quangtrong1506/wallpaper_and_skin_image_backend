@@ -28,7 +28,10 @@ class DocsController extends BaseController {
     async store(req, res) {
         try {
             const slug = stringToSlug(req.body.title);
-            console.log(slug);
+            if (!req.body.title || req.body.title.trim() === "")
+                throw new Error("Tên tài liệu không được để trống");
+            if (!req.body.content || req.body.content.trim() === "")
+                throw new Error("Nội dung tài liệu không được để trống");
             let data = await DocsRepository.store({
                 title: req.body.title,
                 content: req.body.content,
@@ -68,6 +71,10 @@ class DocsController extends BaseController {
     async update(req, res) {
         try {
             const slug = stringToSlug(req.body.title);
+            if (!req.body.title || req.body.title.trim() === "")
+                throw new Error("Tên tài liệu không được để trống");
+            if (!req.body.content || req.body.content.trim() === "")
+                throw new Error("Nội dung tài liệu không được để trống");
             let data = await DocsRepository.update(req.params.id, {
                 title: req.body.title,
                 content: req.body.content,
