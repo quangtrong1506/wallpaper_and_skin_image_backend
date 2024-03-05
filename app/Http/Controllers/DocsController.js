@@ -47,13 +47,11 @@ class DocsController extends BaseController {
         try {
             const { q, page } = req.query;
             const conditions = {};
-            let arr = stringToSlug(q).split("-");
+            let arr = stringToSlug(q || "").split("-");
             let regexString = "";
             arr.forEach((element) => {
                 regexString += `(?=.*${element})`;
             });
-            console.log(regexString);
-
             if (q) conditions.slug = new RegExp(regexString, "gi");
             let data = await DocsRepository.findBy(
                 { ...conditions },
