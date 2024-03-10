@@ -44,7 +44,7 @@ class DocsController extends BaseController {
             });
             const data = await DocsRepository.findBy(
                 {},
-                {},
+                { updated_at: -1 },
                 {
                     limit,
                     skip: (page - 1) * limit,
