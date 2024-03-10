@@ -4,10 +4,8 @@ const albumsRouter = (app) => {
     const router = express.Router();
     router.get("/", DocsController.filter);
     router.post("/", DocsController.store);
-    router.get("/:id", DocsController.getById);
     router.delete("/:id", DocsController.destroy);
-    router.put("/:id", DocsController.update);
-    app.use("/docs", router);
+    app.use("/images", router);
 };
 
 export default albumsRouter;

@@ -27,17 +27,9 @@ class DocsController extends BaseController {
     }
     async store(req, res) {
         try {
-            const slug = stringToSlug(req.body.title);
-            if (!req.body.title || req.body.title.trim() === "")
-                throw new Error("Tên tài liệu không được để trống");
-            if (!req.body.content || req.body.content.trim() === "")
-                throw new Error("Nội dung tài liệu không được để trống");
             let data = await DocsRepository.store({
-                title: req.body.title,
-                content: req.body.content,
-                slug,
+                url: req.body.url,
             });
-
             return responseSuccess(res, data);
         } catch (error) {
             return responseErrors(res, 400, error.message);
@@ -45,47 +37,27 @@ class DocsController extends BaseController {
     }
     async filter(req, res) {
         try {
-            const { q, page } = req.query;
-            const conditions = {};
-            let arr = stringToSlug(q || "").split("-");
-            let regexString = "";
-            arr.forEach((element) => {
-                regexString += `(?=.*${element})`;
+            const { limit = 12, page = 1 } = req.query;
+            console.log({
+                limit,
+                skip: (page - 1) * limit,
             });
-            if (q) conditions.slug = new RegExp(regexString, "gi");
-            let data = await DocsRepository.findBy(
-                { ...conditions },
+            const data = await DocsRepository.findBy(
+                {},
+                {},
                 {
-                    updated_at: -1,
+                    limit,
+                    skip: (page - 1) * limit,
                 }
             );
-            return responseSuccess(res, data);
-        } catch (error) {
-            return responseErrors(res, 400, error.message);
-        }
-    }
-    async getById(req, res) {
-        try {
-            const { id } = req.params;
-            let data = await DocsRepository.findById(id);
-            return responseSuccess(res, data);
-        } catch (error) {
-            return responseErrors(res, 400, error.message);
-        }
-    }
-    async update(req, res) {
-        try {
-            const slug = stringToSlug(req.body.title);
-            if (!req.body.title || req.body.title.trim() === "")
-                throw new Error("Tên tài liệu không được để trống");
-            if (!req.body.content || req.body.content.trim() === "")
-                throw new Error("Nội dung tài liệu không được để trống");
-            let data = await DocsRepository.update(req.params.id, {
-                title: req.body.title,
-                content: req.body.content,
-                slug,
-            });
-            return responseSuccess(res, data);
+            const total = await DocsRepository.count();
+            const result = {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                data,
+                total,
+            };
+            return responseSuccess(res, result);
         } catch (error) {
             return responseErrors(res, 400, error.message);
         }
@@ -93,7 +65,7 @@ class DocsController extends BaseController {
     async destroy(req, res) {
         try {
             let data = await DocsRepository.destroy(req.params.id);
-            console.log(data);
+
             return responseSuccess(res, data);
         } catch (error) {
             return responseErrors(res, 400, error.message);

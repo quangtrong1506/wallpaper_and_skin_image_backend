@@ -2,18 +2,11 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
     {
-        title: {
+        url: {
             type: String,
             required: true,
         },
-        slug: {
-            type: String,
-            required: true,
-        },
-        content: {
-            type: String,
-            required: true,
-        },
+
         created_at: {
             type: Date,
             required: false,
@@ -37,4 +30,4 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-export default mongoose.model("Docs", userSchema);
+export default mongoose.model("Images", userSchema);

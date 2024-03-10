@@ -15,11 +15,16 @@ class BaseRepository {
     store(data) {
         return this.getModel().create(data);
     }
+    count() {
+        return this.getModel().count();
+    }
 
-    findBy(conditions = {}, sort = {}) {
+    findBy(conditions = {}, sort = {}, paginate = {}) {
         return this.getModel()
             .find({ ...conditions, deleted_at: null })
-            .sort(sort);
+            .sort(sort)
+            .skip(paginate.skip)
+            .limit(paginate.limit);
     }
 
     findOne(conditions) {
