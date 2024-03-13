@@ -37,19 +37,14 @@ class DocsController extends BaseController {
     }
     async filter(req, res) {
         try {
-            const { limit = 12, page = 1 } = req.query;
-            console.log({
+            const { limit = 12, page = 1, sort } = req.query;
+            let sortBy = {
+                updated_at: sort == -1 ? -1 : 1,
+            };
+            const data = await DocsRepository.findBy({}, sortBy, {
                 limit,
                 skip: (page - 1) * limit,
             });
-            const data = await DocsRepository.findBy(
-                {},
-                { updated_at: -1 },
-                {
-                    limit,
-                    skip: (page - 1) * limit,
-                }
-            );
             const total = await DocsRepository.count();
             const result = {
                 page: parseInt(page),
